@@ -29,7 +29,7 @@ You can do this however you want to.
 Example:
 In your app config setup code, add this line before 'return config.make_wsgi_app()'
 
-config.add_route('verity_openid', 
+config.add_route('verify_openid', 
 	pattern='/dologin.html',
 	view='pyramid_openid.verify_openid')
 
