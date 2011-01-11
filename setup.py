@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 version = '0.1.0'
 README = os.path.join(os.path.dirname(__file__), 'README.txt')
-long_description = open(README).read() + 'nn'
+long_description = open(README).read()
 
 setup(name='pyramid_openid',
         version=version,
@@ -10,10 +10,10 @@ setup(name='pyramid_openid',
             'OpenID consumer.'),
         long_description=long_description,
         classifiers=['Framework :: Pylons',
-            'Intended Audience :: Developers'
-            'License :: Repoze Public License'
-            'Programming Language :: Python'
-            'Topic :: Internet :: WWW/HTTP'
+            'Intended Audience :: Developers',
+            'License :: Repoze Public License',
+            'Programming Language :: Python',
+            'Topic :: Internet :: WWW/HTTP',
             'Topic :: Internet :: WWW/HTTP :: WSGI'],
         keywords='pyramid openid',
         author='tomlikestorock',
