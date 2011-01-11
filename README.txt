@@ -16,9 +16,10 @@ openid.success_callback = myapp.lib:remember_me
 
 This setup requires you have a folder in your app directory called 'sstore',
 and that you have a callback function in your lib module named "remember_me".
-Remember me will receive the current request and the other information returned
-from the OpenID provider, and will then do whatever is needed to remember the user,
-load metadata into the session - that part is completely up to the coder.
+Remember_me will receive the current request and the other information returned
+from the OpenID provider, and should then do whatever is needed to remember the user -
+pyramid.security.remember, load metadata into the session, etc - that part is 
+completely up to the coder.
 
 This setup will then assume the defaults for the rest of the keys.
 
@@ -32,7 +33,7 @@ config.add_route('verity_openid',
 	pattern='/dologin.html',
 	view='pyramid_openid.verify_openid')
 
-Now you have a url to submit your OpenID form to: /dologin.html.
+Now you have a URL to submit your OpenID form to: /dologin.html.
 Based on the configuration above, it expects to find the user's OpenID URL
 in request.params['openid'].
 
