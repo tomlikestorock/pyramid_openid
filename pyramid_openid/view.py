@@ -1,22 +1,16 @@
 """
 TODO:
-        Dependencies:
-                pyramid
-                openid
-                logging
-                pyramid app must have sessions enabled
-        Make this its own package
-                Write sphinx docs
-                        explain user flow
-                        explain how callback works;
-                                 this is not an authn policy
-                        explain all options
-                Write tests
-                        request with no openid field
-                        request with openid field that doesn't resolve
-                        request with openid field that comes back successful
-                        request with openid field that comes back successful
-                                and calls callback
+    Write sphinx docs
+            explain user flow
+            explain how callback works;
+                     this is not an authn policy
+            explain all options
+    Write tests
+            request with no openid field
+            request with openid field that doesn't resolve
+            request with openid field that comes back successful
+            request with openid field that comes back successful
+                    and calls callback
 """
 import openid
 from openid.store import memstore, filestore, sqlstore
@@ -29,6 +23,8 @@ from openid.extensions import pape, sreg, ax
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember
 
+from itertools import chain
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -39,13 +35,15 @@ def get_ax_required_from_settings(settings):
     for item in ax_required_string.split():
         key, value = item.split("=")
         ax_required[key] = value
+    return ax_required
 
 def get_ax_optional_from_settings(settings):
     ax_optional = {}
     ax_optional_string = settings.get('openid.ax_optional', '')
     for item in ax_optional_string.split():
         key, value = item.split("=")
-        ax_required[key] = value
+        ax_optional[key] = value
+    return ax_optional
 
 def get_sreg_required_from_settings(settings):
     sreg_required = settings.get('openid.sreg_required', '')
@@ -159,8 +157,8 @@ def process_provider_response(request):
                 'sreg': []}
         fr = ax.FetchResponse.fromSuccessResponse(info)
         if fr is not None:
-            ax_required = get_ax_required_from_setings(settings)
-            ax_optional = get_ax_optional_from_setings(settings)
+            ax_required = get_ax_required_from_settings(settings)
+            ax_optional = get_ax_optional_from_settings(settings)
             items = chain(ax_required.items(), ax_optional.items())
             for key, value in items:
                 try:
