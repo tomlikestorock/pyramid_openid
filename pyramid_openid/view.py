@@ -33,6 +33,30 @@ import logging
 
 log = logging.getLogger(__name__)
 
+def get_ax_required_from_settings(settings):
+    ax_required = {}
+    ax_required_string = settings.get('openid.ax_required', '')
+    for item in ax_required_string.split():
+        key, value = item.split("=")
+        ax_required[key] = value
+
+def get_ax_optional_from_settings(settings):
+    ax_optional = {}
+    ax_optional_string = settings.get('openid.ax_optional', '')
+    for item in ax_optional_string.split():
+        key, value = item.split("=")
+        ax_required[key] = value
+
+def get_sreg_required_from_settings(settings):
+    sreg_required = settings.get('openid.sreg_required', '')
+    sreg_required = [a.strip() for a in sreg_required.split()]
+    return sreg_required
+
+def get_sreg_optional_from_settings(settings):
+    sreg_optional = settings.get('openid.sreg_optional', '')
+    sreg_optional = [a.strip() for a in sreg_optional.split()]
+    return sreg_optional
+
 
 def verify_openid(request):
     settings = request.registry.settings
@@ -80,8 +104,8 @@ def process_incoming_request(request, incoming_openid_url):
     openid_consumer = build_consumer_from_request(request)
     try:
         openid_request = openid_consumer.begin(incoming_openid_url)
-        ax_required = settings.get('openid.ax_required', {})
-        ax_optional = settings.get('openid.ax_optional', {})
+        ax_required = get_ax_required_from_settings(settings)
+        ax_optional = get_ax_optional_from_settings(settings)
         log.info('ax_required: %s' % ax_required)
         log.info('ax_optional: %s' % ax_optional)
         if len(ax_required.values()) or len(ax_optional.values()):
@@ -92,8 +116,8 @@ def process_incoming_request(request, incoming_openid_url):
                 fetch_request.add(ax.AttrInfo(value, required=False))
             openid_request.addExtension(fetch_request)
 
-        sreg_required = settings.get('openid.sreg_required', [])
-        sreg_optional = settings.get('openid.sreg_optional', [])
+        sreg_required = get_sreg_required_from_settings(settings)
+        sreg_optional = get_sreg_optional_from_settings(settings)
         log.info('sreg_required: %s' % sreg_required)
         log.info('sreg_optional: %s' % sreg_optional)
         if len(sreg_required) or len(sreg_optional):
