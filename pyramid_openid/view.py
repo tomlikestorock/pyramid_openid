@@ -159,8 +159,8 @@ def process_provider_response(request):
                 'sreg': []}
         fr = ax.FetchResponse.fromSuccessResponse(info)
         if fr is not None:
-            ax_required = settings.get('openid.ax_required', {})
-            ax_optional = settings.get('openid.ax_optional', {})
+            ax_required = get_ax_required_from_setings(settings)
+            ax_optional = get_ax_optional_from_setings(settings)
             items = chain(ax_required.items(), ax_optional.items())
             for key, value in items:
                 try:
@@ -169,8 +169,8 @@ def process_provider_response(request):
                     pass
         fr = sreg.SRegResponse.fromSuccessResponse(info)
         if fr is not None:
-            sreg_required = settings.get('openid.sreg_required', [])
-            sreg_optional = settings.get('openid.sreg_optional', [])
+            sreg_required = get_sreg_required_from_settings(settings)
+            sreg_optional = get_sreg_optional_from_settings(settings)
             items = chain(sreg_required, sreg_optional)
             for key in items:
                 try:
