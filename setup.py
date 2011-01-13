@@ -6,6 +6,7 @@ long_description = open(README).read()
 
 setup(name='pyramid_openid',
         version=version,
+        url='http://github.com/tomlikestorock/pyramid_openid',
         description=('A view for pyramid that functions as an '
             'OpenID consumer.'),
         long_description=long_description,
@@ -16,7 +17,7 @@ setup(name='pyramid_openid',
             'Topic :: Internet :: WWW/HTTP',
             'Topic :: Internet :: WWW/HTTP :: WSGI'],
         keywords='pyramid openid',
-        author='tomlikestorock',
+        author='Thomas Hill',
         author_email='tomlikestorock@gmail.com',
         license='BSD-derived (http://www.repoze.org/LICENSE.txt)',
         packages=find_packages(),
