@@ -77,23 +77,6 @@ openid.store.type = sql
 
 OPTIONAL SETTINGS:
 ==================
-Successful Login Destination URL
---------------------------------
-Key:
-openid.success_destination
-
-Description:
-This is the url that the user will be sent to after they've
-successfully been verified by the OpenID provider.
-
-Default:
-/
-
-Example:
-To have your user be sent to their profile page upon successful
-login:
-openid.success_destination = http://www.example.com/profile.html
-
 Successful Login Callback
 -------------------------
 Key:
@@ -101,8 +84,9 @@ openid.success_callback
 
 Description:
 This is a callable that will be called upon successful verification
-by the OpenID provider. The callable will be passed two parameters;
-the current request, and a dictionary with the following structure:
+by the OpenID provider. The callable will be passed three parameters;
+the current context, the current request, and a dictionary with the 
+following structure:
 {
 	'identity_url': The user's unique URL from the provider,
 	'ax':		A dictionary containing all the returned
@@ -113,6 +97,8 @@ the current request, and a dictionary with the following structure:
 
 This callback is required to have the following format:
 module.optional_submodules:function
+
+What is returned from this callable is return as the response.
 
 Default:
 None

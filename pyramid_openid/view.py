@@ -56,16 +56,16 @@ def get_sreg_optional_from_settings(settings):
     return sreg_optional
 
 
-def verify_openid(request):
+def verify_openid(context, request):
     settings = request.registry.settings
     openid_field = settings.get('openid.param_field_name', 'openid')
     log.info('OpenID Field to search for: %s' % openid_field)
     incoming_openid_url = request.params.get(openid_field, None)
     openid_mode = request.params.get('openid.mode', None)
     if incoming_openid_url is not None:
-        return process_incoming_request(request, incoming_openid_url)
+        return process_incoming_request(context, request, incoming_openid_url)
     elif openid_mode == 'id_res':
-        return process_provider_response(request)
+        return process_provider_response(context, request)
 
 
 def worthless_callback(request, success_dict):
@@ -96,7 +96,7 @@ def build_consumer_from_request(request):
     return openid_consumer
 
 
-def process_incoming_request(request, incoming_openid_url):
+def process_incoming_request(context, request, incoming_openid_url):
     settings = request.registry.settings
     log.info('OpenID URL supplied by user: %s' % incoming_openid_url)
     openid_consumer = build_consumer_from_request(request)
@@ -144,7 +144,7 @@ def process_incoming_request(request, incoming_openid_url):
     return HTTPFound(location=redirect_url)
 
 
-def process_provider_response(request):
+def process_provider_response(context, request):
     settings = request.registry.settings
     openid_consumer = build_consumer_from_request(request)
     info = openid_consumer.complete(request.params, request.url)
@@ -181,16 +181,23 @@ def process_provider_response(request):
             log.info('Callback for storing result: %s' % callback)
             #Isn't there a better/standard way to parse
             #module.submodule:functions, or is this it?
-            callback = callback.split(':')
-            #TODO: Use pyramid.util.DottedNameResolver?
-            callback_module = __import__(callback[0], fromlist=[callback[1]])
-            callback_function = getattr(callback_module, callback[1])
+            callback_function = get_callback(callback)
         else:
             callback_function = worthless_callback
-        callback_function(request, success_dict)
-        success_destination = settings.get('openid.success_destination', '/')
-        return HTTPFound(location=success_destination)
+        return callback_function(context, request, success_dict)
 
+def get_callback(callback_string):
+    callback = callback_string.split(':')
+    #TODO: Use pyramid.util.DottedNameResolver?
+    try:
+        callback_module = __import__(callback[0], fromlist=[callback[1]])
+    except ImportError:
+        return None
+    try:
+        callback_function = getattr(callback_module, callback[1])
+    except AttributeError:
+        return None
+    return callback_function
 
 def error_to_login_form(request, message):
     log.info('OpenID ERROR: %s' % message)
