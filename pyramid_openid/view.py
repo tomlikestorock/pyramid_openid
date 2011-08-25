@@ -21,6 +21,7 @@ from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
 from openid.extensions import pape, sreg, ax
 
 from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import remember
 
 from itertools import chain
@@ -66,6 +67,7 @@ def verify_openid(context, request):
         return process_incoming_request(context, request, incoming_openid_url)
     elif openid_mode == 'id_res':
         return process_provider_response(context, request)
+    return HTTPBadRequest()
 
 
 def worthless_callback(request, success_dict):
