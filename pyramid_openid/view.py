@@ -162,7 +162,7 @@ def process_provider_response(context, request):
         success_dict = {
                 'identity_url': info.identity_url,
                 'ax': {},
-                'sreg': []}
+                'sreg': {}}
         fr = ax.FetchResponse.fromSuccessResponse(info)
         if fr is not None:
             ax_required = get_ax_required_from_settings(settings)
@@ -180,7 +180,7 @@ def process_provider_response(context, request):
             items = chain(sreg_required, sreg_optional)
             for key in items:
                 try:
-                    success_dict['sreg'][key] = fr.get(value)
+                    success_dict['sreg'][key] = fr.get(key)
                 except KeyError:
                     pass
 
